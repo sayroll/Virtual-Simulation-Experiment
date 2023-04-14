@@ -40,7 +40,10 @@
             </template>
         </a-table>
     </div>
-
+    <div>
+        <p>净现值（NPV）：{{ npv }}</p>
+        <p>内部收益率（IRR）：{{ irr.toFixed(2) }}%</p>
+    </div>
 </template>
 
 <script lang="ts">
@@ -60,6 +63,8 @@ export default {
         //期数
         const periodvalue = ref<number>(3);
         const discount_rate = ref<number>(10);
+        const npv = ref<number>(0);
+        const irr = ref<number>(0);
 
         const columns = [
             {
@@ -101,29 +106,63 @@ export default {
             editableData[key] = cloneDeep(dataSource.value.filter(item => key === item.key)[0]);
         };
         const save = (key: string) => {
-            Object.assign(dataSource.value.filter(item => key === item.key)[0], editableData[key]);
-            delete editableData[key];
+             Object.assign(dataSource.value.filter(item => key === item.key)[0], editableData[key]);
+        delete editableData[key];
         };
         const cancel = (key: string) => {
             delete editableData[key];
         };
 
+
         const refreshcomp = () => {
-            const newData: DataItem[] = [];
-            for (let i = 0; i <= periodvalue.value; i++) {
-                newData.push({
-                    key: i.toString(),
-                    period: `${i}`,
-                    cashflow: 0,
-                    cashflow_discounted:0,
-                });
-            }
-            dataSource.value = newData;
+        const newData: DataItem[] = [];
+        for (let i = 0; i <= periodvalue.value; i++) {
+            newData.push({
+                key: i.toString(),
+                period: `${i}`,
+                cashflow: 0,
+                cashflow_discounted:0,
+            });
+        }
+        dataSource.value = newData;
         };
 
-        const cal=()=>{
+        const cal = () => {
+        // Calculate NPV
+        let npvSum = 0;
+        dataSource.value.forEach((item, index) => {
+            const discountedCashFlow = item.cashflow / Math.pow(1 + discount_rate.value / 100, index);
+            item.cashflow_discounted = discountedCashFlow;
+            npvSum += discountedCashFlow;
+        });
+        npv.value = npvSum;
 
+        // Calculate IRR
+        const cashflows = dataSource.value.map(item => item.cashflow);
+        const guess = 0.1;
+        const maxIter = 1000;
+        const tol = 0.0001;
+        let r = guess;
+        let iter = 0;
+        let diff = 1;
+
+        while (diff > tol && iter < maxIter) {
+            let f = 0;
+            let df = 0;
+
+            cashflows.forEach((cf, i) => {
+                f += cf / Math.pow(1 + r, i);
+                df -= (i * cf) / Math.pow(1 + r, i + 1);
+            });
+
+            let newR = r - f / df;
+            diff = Math.abs(newR - r);
+            r = newR;
+            iter++;
         }
+
+        irr.value = r * 100;
+    };
 
         return {
             discount_rate,
@@ -137,7 +176,9 @@ export default {
             save,
             cancel,
             refreshcomp,
-            cal
+            cal,
+            npv,
+            irr
         };
     },
 }
