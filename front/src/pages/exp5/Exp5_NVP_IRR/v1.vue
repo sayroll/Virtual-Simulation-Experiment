@@ -105,9 +105,18 @@ export default {
         const edit = (key: string) => {
             editableData[key] = cloneDeep(dataSource.value.filter(item => key === item.key)[0]);
         };
+        const validateCashFlow = (value: any): boolean => {
+            return !isNaN(parseFloat(value)) && isFinite(value);
+        };
+
         const save = (key: string) => {
-             Object.assign(dataSource.value.filter(item => key === item.key)[0], editableData[key]);
-        delete editableData[key];
+            if (!validateCashFlow(editableData[key].cashflow)) {
+                alert('请输入有效的现金流数据！');
+                return;
+            }
+
+            Object.assign(dataSource.value.filter(item => key === item.key)[0], editableData[key]);
+            delete editableData[key];
         };
         const cancel = (key: string) => {
             delete editableData[key];
@@ -161,7 +170,13 @@ export default {
             iter++;
         }
 
-        irr.value = r * 100;
+        
+        if (isFinite(irr.value)) {
+            irr.value = r * 100;
+        } else {
+        irr.value = NaN;
+        alert('IRR 计算出现问题，请尝试使用其他投资评估指标，如 MIRR 或 NPV。');
+        }
     };
 
         return {
