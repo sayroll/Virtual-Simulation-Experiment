@@ -138,46 +138,46 @@ export default {
 
         const cal = () => {
         // Calculate NPV
-        let npvSum = 0;
-        dataSource.value.forEach((item, index) => {
+            let npvSum = 0;
+            dataSource.value.forEach((item, index) => {
             const discountedCashFlow = item.cashflow / Math.pow(1 + discount_rate.value / 100, index);
             item.cashflow_discounted = discountedCashFlow;
-            npvSum += discountedCashFlow;
-        });
-        npv.value = npvSum;
+        npvSum += discountedCashFlow;
+    });
+    npv.value = npvSum;
 
-        // Calculate IRR
-        const cashflows = dataSource.value.map(item => item.cashflow);
-        const guess = 0.1;
-        const maxIter = 1000;
-        const tol = 0.0001;
-        let r = guess;
-        let iter = 0;
-        let diff = 1;
+    // Calculate IRR using bisection method
+    const cashflows = dataSource.value.map(item => item.cashflow);
+    const maxIter = 1000;
+    const tol = 0.0001;
+    let lower = -0.9999; // Lower bound, can't be -1 because it will cause a division by zero
+    let upper = 1;
+    let mid = 0;
+    let npvMid = 0;
+    let iter = 0;
 
-        while (diff > tol && iter < maxIter) {
-            let f = 0;
-            let df = 0;
+    while (iter < maxIter) {
+        mid = (lower + upper) / 2;
+        npvMid = cashflows.reduce((acc, cf, i) => acc + cf / Math.pow(1 + mid, i), 0);
 
-            cashflows.forEach((cf, i) => {
-                f += cf / Math.pow(1 + r, i);
-                df -= (i * cf) / Math.pow(1 + r, i + 1);
-            });
-
-            let newR = r - f / df;
-            diff = Math.abs(newR - r);
-            r = newR;
-            iter++;
-        }
-
-        
-        if (isFinite(irr.value)) {
-            irr.value = r * 100;
+        if (Math.abs(npvMid) < tol) {
+            break;
+        } else if (npvMid > 0) {
+            lower = mid;
         } else {
+            upper = mid;
+        }
+        iter++;
+    }
+
+    if (isFinite(mid)) {
+        irr.value = mid * 100;
+    } else {
         irr.value = NaN;
         alert('IRR 计算出现问题，请尝试使用其他投资评估指标，如 MIRR 或 NPV。');
         }
     };
+    
 
         return {
             discount_rate,
