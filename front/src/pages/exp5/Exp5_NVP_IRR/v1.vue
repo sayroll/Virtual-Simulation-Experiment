@@ -1,18 +1,21 @@
 <template>
-    <div>
+    <div class="container">
         <h2>--这里是净现值(NPV)与内部收益率(IRR)实验--</h2>
-        <div>
-            请输入期数： <a-input-number id="inputNumber" v-model:value="periodvalue" :min="1" :max="50" />
-            <!-- 当前值：{{ value }}  -->
+        <div class="input-section">
+            <div class="input-group">
+                <label for="inputNumber">请输入期数：</label>
+                <a-input-number id="inputNumber" v-model:value="periodvalue" :min="1" :max="50" />
+            </div>
             <a-button type="primary" @click="refreshcomp()">确认</a-button>
             <a-button type="primary" danger style="margin-left:20px;" @click="cal()">计算结果</a-button>
         </div>
-        <div>
-            请输入折现率：<a-input-number v-model:value="discount_rate" :min="0" :max="100" :formatter="value => `${value}%`"
+        <div class="input-group">
+            <label for="discountRate">请输入折现率：</label>
+            <a-input-number id="discountRate" v-model:value="discount_rate" :min="0" :max="100" :formatter="value => `${value}%`"
                 :parser="value => value.replace('%', '')" />
         </div>
     </div>
-    <div>
+    <div class="table-container">
         <a-table :columns="columns" :data-source="dataSource" bordered>
             <template #bodyCell="{ column, text, record }">
                 <template v-if="['cashflow'].includes(column.dataIndex)">
@@ -40,7 +43,7 @@
             </template>
         </a-table>
     </div>
-    <div>
+    <div class="result-section">
         <p>净现值（NPV）：{{ npv }}</p>
         <p>内部收益率（IRR）：{{ irr.toFixed(2) }}%</p>
     </div>
@@ -175,8 +178,8 @@ export default {
     } else {
         irr.value = NaN;
         alert('IRR 计算出现问题，请尝试使用其他投资评估指标，如 MIRR 或 NPV。');
-        }
-    };
+    }
+};
     
 
         return {
@@ -200,6 +203,40 @@ export default {
 </script>
 
 <style scoped>
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.input-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    margin-right: 10px;
+}
+
+.table-container {
+    margin-bottom: 20px;
+}
+
+.result-section {
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+}
+
 .editable-row-operations a {
     margin-right: 8px;
 }
