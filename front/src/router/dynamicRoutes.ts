@@ -43,7 +43,7 @@ function parseRoutes(routes: RouteOption[]): RouteRecordRaw[] {
       renderMenu: true,
       link: (route as RouteRecordLink).link,
     });
-    // 解析组件 及 子路由
+    // 解析组件 及子路由
     const _route = {
       ...route,
       children: route.children && parseRoutes(route.children),

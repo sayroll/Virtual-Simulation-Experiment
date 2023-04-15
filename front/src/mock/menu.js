@@ -128,6 +128,31 @@ const presetList = [
     ]
   },
   {
+    id: 5,
+    name: 'exp5',
+    title: '软件工程管理与经济',
+    target: '_self',
+    path: '/exp5',
+    component: '@/pages/exp5',
+    renderMenu: true,
+    parent: null,
+    permission: null,
+    cacheable: true,
+    children: [
+      {
+        id: 51,
+        name: 'exp5_NPV_IRR',
+        title: '净现值与IRR计算',
+        target: '_self',
+        path: '/exp5/Exp5_NVP_IRR',
+        component: '@/pages/exp5/Exp5_NVP_IRR/v1.vue',
+        renderMenu: true,
+        permission: null,
+        cacheable: true,
+      }
+    ]
+  },
+  {
     id: 6,
     name: 'exp6',
     title: '软件项目/产品的风险影响与评价实验',
