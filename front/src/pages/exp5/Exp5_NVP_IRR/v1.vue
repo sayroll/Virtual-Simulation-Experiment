@@ -7,12 +7,14 @@
                 <a-input-number id="inputNumber" v-model:value="periodvalue" :min="1" :max="50" />
             </div>
             <a-button type="primary" @click="refreshcomp()">确认</a-button>
-            <a-button type="primary" danger style="margin-left:20px;" @click="cal()">计算结果</a-button>
         </div>
         <div class="input-group">
             <label for="discountRate">请输入折现率：</label>
             <a-input-number id="discountRate" v-model:value="discount_rate" :min="0" :max="100" :formatter="value => `${value}%`"
                 :parser="value => value.replace('%', '')" />
+        </div>
+        <div class="calculate-button">
+            <a-button type="primary" @click="cal()" class="calculate-result">计算结果</a-button>
         </div>
     </div>
     <div class="table-container">
@@ -30,13 +32,13 @@
                 <template v-else-if="column.dataIndex === 'operation'">
                     <div class="editable-row-operations">
                         <span v-if="editableData[record.key]">
-                            <a-typography-link @click="save(record.key)">Save</a-typography-link>
+                            <a-button type="primary" size="small" @click="save(record.key)" class="operation-btn">Save</a-button>
                             <a-popconfirm title="Sure to cancel?" @confirm="cancel(record.key)">
-                                <a>Cancel</a>
+                                <a-button type="default" size="small" class="operation-btn">Cancel</a-button>
                             </a-popconfirm>
                         </span>
                         <span v-else>
-                            <a @click="edit(record.key)">Edit</a>
+                            <a-button type="primary" size="small" @click="edit(record.key)" class="operation-btn">Edit</a-button>
                         </span>
                     </div>
                 </template>
@@ -44,10 +46,17 @@
         </a-table>
     </div>
     <div class="result-section">
-        <p>净现值（NPV）：{{ npv }}</p>
-        <p>内部收益率（IRR）：{{ irr.toFixed(2) }}%</p>
+        <div class="result-item">
+            <span class="result-label">净现值（NPV）：</span>
+            <span class="result-value">{{ npv }}</span>
+        </div>
+        <div class="result-item">
+            <span class="result-label">内部收益率（IRR）：</span>
+            <span class="result-value">{{ irr.toFixed(2) }}%</span>
+        </div>
     </div>
 </template>
+
 
 <script lang="ts">
 import { cloneDeep } from 'lodash-es';
@@ -201,12 +210,19 @@ export default {
     },
 }
 </script>
-
 <style scoped>
 .container {
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 40px;
 }
 
 .input-section {
@@ -224,20 +240,97 @@ export default {
 }
 
 .input-group label {
+    font-size: 16px;
+    font-weight: bold;
     margin-right: 10px;
 }
 
-.table-container {
+.confirm-button {
+    margin-left: 20px;
+}
+
+.calculate-button {
+    text-align: center;
     margin-bottom: 20px;
 }
 
-.result-section {
-    padding: 20px;
-    background-color: #f8f8f8;
-    border-radius: 5px;
+.table-container {
+    margin-bottom: 40px;
 }
 
-.editable-row-operations a {
-    margin-right: 8px;
+.result-section {
+    display: flex;
+    justify-content: center;
 }
+
+.result-card {
+    background-color: #f0f2f5;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    width: 50%;
+    text-align: center;
+}
+
+.result-card p {
+    font-size: 18px;
+    font-weight: bold;
+}
+.editable-row-operations {
+    display: flex;
+    justify-content: space-between;
+    width: 150px;
+}
+
+.operation-btn {
+    margin-right: 10px;
+}
+
+.a-table {
+    width: 100%;
+    background-color: #fff;
+    border-collapse: collapse;
+}
+
+.a-table thead th {
+    background-color: #f0f2f5;
+    padding: 10px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.a-table tbody tr:nth-child(even) {
+    background-color: #f0f2f5;
+}
+
+.a-table tbody tr:hover {
+    background-color: #e6f7ff;
+}
+
+.a-table tbody td {
+    padding: 10px;
+}
+
+.result-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 18px;
+        margin-top: 30px;
+    }
+    
+    .result-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .result-label {
+        font-weight: bold;
+        margin-right: 5px;
+    }
+    
+    .result-value {
+        color: #1890ff;
+    }
 </style>
