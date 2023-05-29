@@ -1,5 +1,34 @@
+
+
 <template>
     <div class="container">
+        <h2>实验报告</h2>
+        <div class="report-section">
+            <div class="report-item">
+                <h3>一.实验目的</h3>
+                <p>这个实验的目的是通过实践理解和应用两种重要的金融分析工具 - 净现值（NPV）和内部回报率（IRR）。学习者将学会如何通过图表更直观地解析和解释这两个指标，从而更好地评估投资项目的盈利能力。</p>
+            </div>
+            <div class="report-item">
+                <h3>二.实验原理</h3>
+                <p>
+        1. NPV是一种投资决策工具，用于评估投资项目的价值。它将项目产生的所有现金流量折现到现在，然后减去初始投资。NPV公式如下：   </p>
+        <p><strong>NPV = ∑ Ct / (1+r)^t - C0</strong></p>
+ 
+    <p>
+        2. IRR是使投资项目的NPV为零的折现率。IRR公式如下：</p>
+        <p style="font-weight: bold; font-size: larger;">NPV = ∑ Ct / (1+r)^t - C0</p>
+    
+            </div>
+            <div class="report-item">
+                <h3>三.实验步骤</h3>
+                <p>步骤 1：设定折现率。在我们的实验中，你需要设定五个折现率，这五个折现率将会被用来计算 NPV。</p>
+                <p>步骤 2：输入现金流。首先，你需要输入初始投资额（通常是负值，因为这是你支出的现金）。然后，你需要预期的未来现金流。这些现金流是你预期的项目收益。</p>
+                <p>步骤 3：计算 NPV。根据你设定的折现率和输入的现金流，应用将自动计算出五个 NPV 值。</p>
+                <p>步骤 4：绘制 NPV 图表。根据计算出的 NPV 值和对应的折现率，绘制出 NPV 图表。</p>
+                <p>步骤 5：计算 IRR。应用将使用输入的现金流来计算 IRR。</p>
+                <p>步骤 6：绘制 IRR 图表。在图表中标出 IRR，方便我们直观地看出在哪个折现率下，项目的 NPV 为零。</p>
+            </div>
+        </div>
         <div class="input-section">
             <div class="input-group">
                 <label for="inputNumber">请输入期数：</label>
@@ -96,6 +125,8 @@ import type { UnwrapRef } from 'vue';
 import * as echarts from 'echarts';
 import { Document } from '@element-plus/icons-vue';
 import { onMounted } from 'vue';
+import { VueMathjax } from 'vue-mathjax'
+
 
 interface DataItem {
     key: string;
@@ -432,7 +463,23 @@ h2 {
     text-align: center;
     margin-bottom: 40px;
 }
+.report-section {
+    margin-bottom: 40px;
+}
+.report-item {
+  text-align: left;
+  text-indent: 2em;
+}
+.report-item h3 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
 
+.report-item p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
 .input-section {
     display: flex;
     flex-wrap: wrap;
