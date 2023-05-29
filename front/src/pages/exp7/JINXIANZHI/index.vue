@@ -82,6 +82,7 @@
     </div>
 
     <div id="chart1" style="width: 600px;height:400px;"></div>
+    <div id="chart2" style="width: 600px;height:400px;"></div>
     <!-- <div ref="chart" style="width: 100%; height: 400px;"></div> -->
     <div>hello</div>
 </template>
@@ -106,7 +107,7 @@ interface DataItem {
 export default {
     name: 'JINXIANZHI',
     setup() {
-        //期数
+        //期数  
         const periodvalue = ref<number>(3);
         const discount_rate1 = ref<number>(10);
         const discount_rate2 = ref<number>(10);
@@ -115,6 +116,9 @@ export default {
         const discount_rate5 = ref<number>(10);
         const npv = ref<number>(0);
         var npv_result: number[] = [0, 0, 0, 0, 0];
+        const discount_0 = ref<number>(10);
+        const discount_100 = ref<number>(10);
+        var npv_show:number[] = [0,0];
         const irr = ref<number>(0);
 
         const columns = [
@@ -182,6 +186,12 @@ export default {
                     cashflow_discounted: 0,
                 });
             }
+            npv_result[0] = 0;
+            npv_result[1] = 0;
+            npv_result[2] = 0;
+            npv_result[3] = 0;
+            npv_result[4] = 0;
+            irr.value = 0;
             dataSource.value = newData;
         };
 
@@ -215,13 +225,32 @@ export default {
                 npv_result[i] = npvSum;
             };
             //npv.value = npvSum;
-
+            for(let i = 0 ; i < 2;i++)
+            {
+                let npvSum = 0;
+                let discount_rate = 0;
+                discount_0.value = 0;
+                discount_100.value = 100;
+                switch (i) {
+                    case 0:
+                        discount_rate = discount_0.value;
+                        break;
+                    case 1:
+                        discount_rate = discount_100.value;
+                        break;
+                }
+                dataSource.value.forEach((item, index) => {
+                    const discountedCashFlow = item.cashflow / Math.pow(1 + discount_rate / 100, index);
+                    npvSum += discountedCashFlow;
+                });
+                npv_show[i] = npvSum;
+            }
             // Calculate IRR using bisection method
             const cashflows = dataSource.value.map(item => item.cashflow);
             const maxIter = 1000;
             const tol = 0.0001;
             let lower = -0.9999; // Lower bound, can't be -1 because it will cause a division by zero
-            let upper = 1;
+            let upper = 2;
             let mid = 0;
             let npvMid = 0;
             let iter = 0;
@@ -256,15 +285,27 @@ export default {
             // 模拟数据
             var options = {
                 title: {
-                    text: 'NVP & IRR 图示'
+                    text: 'NPV图示'
                 },
             };
 
             mychart.setOption(options);
+
+            //IRR表
+            var mychart2 = echarts.init(document.getElementById('chart2'));
+
+            // 模拟数据
+            var options2 = {
+                title: {
+                    text: 'IRR 图示'
+                },
+            };
+            mychart2.setOption(options2);
         });
 
         const drawchart = () => {
             var mychart = echarts.getInstanceByDom(document.getElementById('chart1'));
+            var mychart2 = echarts.getInstanceByDom(document.getElementById('chart2'));
             console.log(npv_result);
             console.log(discount_rate5.value);
             console.log(typeof(discount_rate5.value));
@@ -274,7 +315,7 @@ export default {
             console.log(discount_rate1.value);
             var options = {
                 title: {
-                    text: 'NVP & IRR 图示',
+                    text: 'NPV图示',
                 },
                 tooltip: {
                     trigger: 'axis',
@@ -285,9 +326,11 @@ export default {
                 xAxis: {
                     //data:[-2,-1,0,1,2],
                     data: [discount_rate1.value/100, discount_rate2.value/100, discount_rate3.value/100, discount_rate4.value/100, discount_rate5.value/100],
+                    name:'折现率',
                 },
                 yAxis: {
                     type: 'value',
+                    name:'净现值',
                 },
                 series: [
                     {
@@ -297,6 +340,55 @@ export default {
                 ]
             };
             mychart.setOption(options);
+            var x;
+            var y;
+            if(irr.value/100 <0)
+            {
+                x = [(irr.value/100).toFixed(4),0/100,100/100];
+                y = [
+                    {value:0,itemStyle:{color:'red'}},{value:npv_show[0]},{value:npv_show[1]}];
+            }
+            else
+            {
+                if(irr.value/100 < 1)
+                {
+                    x = [0/100,(irr.value/100).toFixed(4),100/100];
+                    y = [{value:npv_show[0]},{value:0,itemStyle:{color:'red'}},{value:npv_show[1]}];
+                }
+                else
+                {
+                    x = [0/100,100/100,(irr.value/100).toFixed(4)];
+                    y = [{value:npv_show[0]},{value:npv_show[1]},{value:0,itemStyle:{color:'red'}}];
+                }
+            }
+            var options2 = {
+                title: {
+                    text: 'IRR图示',
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross'
+                    }
+                },
+                xAxis: {
+                    //data:[-2,-1,0,1,2],
+                    data: x,
+                    name:"折现率",
+                    boundaryGap:true,
+                },
+                yAxis: {
+                    type: 'value',
+                    name:'净现值',
+                },
+                series: [
+                    {
+                        data:y,
+                        type: 'line'
+                    }
+                ]
+            };
+            mychart2.setOption(options2);
         };
 
         return {
@@ -320,6 +412,7 @@ export default {
             npv,
             npv_result,
             irr,
+            npv_show,
         };
     },
 }
