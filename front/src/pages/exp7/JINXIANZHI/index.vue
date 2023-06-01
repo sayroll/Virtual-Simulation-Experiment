@@ -27,7 +27,7 @@
                 <p>步骤 4：绘制现金流量图。请点击计算按钮，系统会根据输入数据绘制出相应的现金流量图。</p>
                 <p>步骤 5：计算 NPV 与 IRR。根据已经输入的数据，系统会计算NPV与IRR指标。</p>
                 <p>步骤 6：请输入绘图所需最大折现率。输入绘制NPV-折现率图表中</p>
-                <p>步骤 7：绘制 NPV-IRR 图。点击按钮，系统会根据输入数据绘制相应 NPV-IRR 图</p>
+                <p>步骤 7：绘制 NPV-净现值 图。点击按钮，系统会根据输入数据绘制相应 NPV-净现值 图</p>
             </div>
         </div>
         <div class="input-section">
@@ -55,37 +55,46 @@
                     <div class="editable-row-operations">
                         <span v-if="editableData[record.key]">
                             <a-button type="primary" size="small" @click="save(record.key)"
-                                class="operation-btn">Save</a-button>
+                                class="operation-btn">保存</a-button>
                             <a-popconfirm title="Sure to cancel?" @confirm="cancel(record.key)">
-                                <a-button type="default" size="small" class="operation-btn">Cancel</a-button>
+                                <a-button type="default" size="small" class="operation-btn">取消</a-button>
                             </a-popconfirm>
                         </span>
                         <span v-else>
                             <a-button type="primary" size="small" @click="edit(record.key)"
-                                class="operation-btn">Edit</a-button>
+                                class="operation-btn">现金流数据输入</a-button>
                         </span>
                     </div>
                 </template>
             </template>
         </a-table>
     </div>
-    <div class="input-group">
-        <label for="discountRate">请设定折现率：</label>
-        <a-input-number id="discountRate" v-model:value="discount_rate1" :min="0" :max="100"
+    <div class="container">
+        <div class="input-section">
+            <div class="input-group">
+            <label for="discountRate">请设定折现率：</label>
+            <a-input-number id="discountRate" v-model:value="discount_rate1" :min="0" :max="100"
             :formatter="value => `${value}%`" :parser="value => value.replace('%', '')" />
-        <a-button type="primary" @click="calanddraw1();" class="calculate-result">计算现金流量并绘制相应图示</a-button>
+            <a-button type="primary" @click="calanddraw1();" class="calculate-result">计算折现后每年现金流量并绘制相应图表</a-button>
+            </div>
+        </div>
+    </div>
+    <div class="chart1-container">
+        <div  id="chart1" style="width: 600px;height:400px;"></div>
     </div>
 
-    <div id="chart1" style="width: 600px;height:400px;"></div>
-
-    <div class="input-group">
-        <a-button type="primary" @click=" calanddraw2(); " class="calculate-result"
-            style="margin-left: 10px;">计算NPV和IRR并绘制相应图示</a-button>
+    <div class="container">
+            <div class="input-group">
+                <a-button type="primary" @click="calculateNPV();draw2()"  class="calculate-result"
+                style="margin-left: 10px;">计算NPV和IRR 并画出 NPV-折现率 图</a-button>
+            </div>
     </div>
+    
     <div class="result-section">
         <div class="result-item">
             <span class="result-label">净现值（NPV）：</span>
-            <span class="result-value"> {{ npv }} </span>
+            <span class="result-value"> {{ npv.toFixed(2) }} </span>
+            <span class="result-label"> &nbsp万元</span>
         </div>
         <div class="result-item">
             <span class="result-label">内部收益率（IRR）：</span>
@@ -93,9 +102,11 @@
         </div>
     </div>
 
-    <div id="chart2" style="width: 600px;height:400px;"></div>
+
+    <div class="chart2-container">
+        <div id="chart2" style="width: 600px;height:400px;"></div>
+    </div>
     <!-- <div ref="chart" style="width: 100%; height: 400px;"></div> -->
-    <div>hello</div>
 </template>
 
 
@@ -122,42 +133,38 @@ export default {
     name: 'JINXIANZHI',
     setup() {
         //期数  
-        const periodvalue = ref<number>(3);
+        const periodvalue = ref<number>(5);
         const discount_rate1 = ref<number>(10);
+        const final_rate = ref<number>(10);
         const npv = ref<number>(0);
         let tmpnpv =0;
         let npv_init=0;
-        // var npv_result: number[] = [0, 0, 0, 0, 0];
-        //let graph1data: Array<number>;
-        //var graph1x: number[];
-        const discount_0 = ref<number>(10);
-        const discount_100 = ref<number>(10);
         var npv_show: number[] = [0, 0];
         const irr = ref<number>(0);
 
         const columns: TableColumnType[] = [
             {
-                title: 'Time Point',
+                title: 'Time Point 时间点',
                 dataIndex: 'period',
                 width: '15%',
             },
             {
-                title: 'cashflow',
+                title: 'Cashflow 现金流/万元',
                 dataIndex: 'cashflow',
                 width: '15%',
             },
             {
-                title: 'operation',
+                title: 'Operation 操作',
                 dataIndex: 'operation',
                 width: '15%',
             },
             {
-                title: 'cashflow_discounted',
+                title: 'Cashflow_discounted 折现后现金流/万元',
                 dataIndex: 'cashflow_discounted',
                 width: '15%',
             },
             {
-                title: 'attention',
+                title: '输入注意事项',
                 dataIndex: 'attentioninfo',
                 customCell: (_, index) => {
                     if (index === 0) {
@@ -177,7 +184,7 @@ export default {
                 period: `${i}`,
                 cashflow: 0,
                 cashflow_discounted: 0,
-                attentioninfo: 'please input legal value',
+                attentioninfo: '为符合标准现金流要求，请注意时间点0时的现金流输入需要为负，其余时间点现金流输入需要为非负数',
             });
         }
 
@@ -191,12 +198,33 @@ export default {
         const validateCashFlow = (value: any): boolean => {
             return !isNaN(parseFloat(value)) && isFinite(value);
         };
+        const validateNumber = (time: any,value:any):boolean=>{
+            if((time ==0 && value < 0) ||(time >0 && value >= 0))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         const save = (key: string) => {
             if (!validateCashFlow(editableData[key].cashflow)) {
                 alert('请输入有效的现金流数据！');
                 return;
             }
-
+            if(!validateNumber(editableData[key].period,editableData[key].cashflow))
+            {
+                if(editableData[key].cashflow < 0)
+                {
+                    alert('请输入非负数');
+                }
+                else
+                {
+                    alert('请输入负数');
+                }
+                return;
+            }
             Object.assign(dataSource.value.filter(item => key === item.key)[0], editableData[key]);
             delete editableData[key];
         };
@@ -211,7 +239,7 @@ export default {
                     period: `${i}`,
                     cashflow: 0,
                     cashflow_discounted: 0,
-                    attentioninfo: 'please input legal value',
+                    attentioninfo: '为符合标准现金流要求，请注意时间点0时的现金流输入需要为负，其余时间点现金流输入需要为非负数',
                 });
             }
             irr.value = 0;
@@ -224,7 +252,7 @@ export default {
             // 模拟数据
             var options = {
                 title: {
-                    text: '现金流量图'
+                    text: '折现后当年现金流量 图'
                 },
             };
             mychart.setOption(options);
@@ -234,7 +262,7 @@ export default {
             // 模拟数据
             var options2 = {
                 title: {
-                    text: 'NPV-IRR图示'
+                    text: 'NPV-折现率 图'
                 },
             };
             mychart2.setOption(options2);
@@ -249,9 +277,9 @@ export default {
             dataSource.value.forEach((item, index) => {
                 const discountedCashFlow = item.cashflow / Math.pow(1 + discount_rate / 100, index);
                 npv_init+=item.cashflow/1;
-                item.cashflow_discounted = discountedCashFlow;
+                item.cashflow_discounted = Math.round(discountedCashFlow*100)/100;
                 console.log(discountedCashFlow);
-                graph1data.push(discountedCashFlow);
+                graph1data.push(discountedCashFlow.toFixed(2));
                 graph1x.push(index);
                 npvSum += discountedCashFlow;
             });
@@ -261,7 +289,7 @@ export default {
             var mychart = echarts.getInstanceByDom(document.getElementById('chart1'));
             var options = {
                 title: {
-                    text: '现金流量图',
+                    text: '折现后当年现金流量 图',
                 },
                 tooltip: {
                     trigger: 'axis',
@@ -276,26 +304,27 @@ export default {
                 },
                 yAxis: {
                     type: 'value',
-                    name: '现金流/万元',
+                    name: '折现后当年现金流量/万元',
                 },
                 series: [
                     {
                         data: graph1data,
-                        type: 'line'
+                        type: 'line',
+                        smooth:true
                     }
                 ]
             };
             mychart.setOption(options);
         }
 
-        const calanddraw2 = () => {
+        const calculateNPV = () =>{
             npv.value=tmpnpv;
             // Calculate IRR using bisection method
             const cashflows = dataSource.value.map(item => item.cashflow);
             const maxIter = 1000;
             const tol = 0.0001;
             let lower = -0.9999; // Lower bound, can't be -1 because it will cause a division by zero
-            let upper = 1;
+            let upper = 5;
             let mid = 0;
             let npvMid = 0;
             let iter = 0;
@@ -320,37 +349,34 @@ export default {
                 irr.value = NaN;
                 alert('IRR 计算出现问题，请尝试使用其他投资评估指标，如 MIRR 或 NPV。');
             }
+        }
+
+        const draw2 = () => {
+
+            let npvSum = 0;
+            let discount_rate = final_rate.value;
+            dataSource.value.forEach((item, index) => {
+                const discountedCashFlow = item.cashflow / Math.pow(1 + discount_rate / 100, index);
+                npv_init+=item.cashflow/1;
+                item.cashflow_discounted = discountedCashFlow;
+                console.log(discountedCashFlow);
+                npvSum += discountedCashFlow;
+            });
 
             //draw graph
             var mychart2 = echarts.getInstanceByDom(document.getElementById('chart2'));
-            var x;
-            var y;
-            x=[0/100,(irr.value/100).toFixed(4),discount_rate1.value/100];
-            // let npv_init=0;
-            // dataSource.value.forEach((item, index) => {
-            //     npv_init+=item.cashflow;
-            // });
-            //console.log(npv_init);
+            var data = [[0,npv_init],{value:[(irr.value/100).toFixed(4),0], itemStyle:{color:'red'}},[discount_rate1.value/100,npv.value.toFixed(4)]];
+            
+            if(irr.value > discount_rate1.value)
+            {
+                var tmp = data[1];
+                data[1] = data[2];
+                data[2] = tmp;
+            }
 
-            y=[{value:npv_init},{value:0,itemStyle:{color:'red'}},{value:npv.value}];
-            // if (irr.value / 100 < 0) {
-            //     x = [(irr.value / 100).toFixed(4), 0 / 100, 100 / 100];
-            //     y = [
-            //         { value: 0, itemStyle: { color: 'red' } }, { value: npv_show[0] }, { value: npv_show[1] }];
-            // }
-            // else {
-            //     if (irr.value / 100 < 1) {
-            //         x = [0 / 100, (irr.value / 100).toFixed(4), 100 / 100];
-            //         y = [{ value: npv_show[0] }, { value: 0, itemStyle: { color: 'red' } }, { value: npv_show[1] }];
-            //     }
-            //     else {
-            //         x = [0 / 100, 100 / 100, (irr.value / 100).toFixed(4)];
-            //         y = [{ value: npv_show[0] }, { value: npv_show[1] }, { value: 0, itemStyle: { color: 'red' } }];
-            //     }
-            // }
             var options2 = {
                 title: {
-                    text: 'NPV-IRR图示',
+                    text: 'NPV-折现率 图',
                 },
                 tooltip: {
                     trigger: 'axis',
@@ -359,7 +385,6 @@ export default {
                     }
                 },
                 xAxis: {
-                    data: x,
                     name: "折现率",
                     boundaryGap: true,
                 },
@@ -369,8 +394,9 @@ export default {
                 },
                 series: [
                     {
-                        data: y,
-                        type: 'line'
+                        data: data,
+                        type: 'line',
+                        smooth:true
                     }
                 ]
             };
@@ -380,18 +406,19 @@ export default {
 
         return {
             discount_rate1,
+            final_rate,
             periodvalue,
             dataSource,
             columns,
             editingKey: '',
             editableData,
-            //itemkey,
             edit,
             save,
             cancel,
             refreshcomp,
             calanddraw1,
-            calanddraw2,
+            draw2,
+            calculateNPV,
             npv,
             irr,
             npv_show,
@@ -446,6 +473,7 @@ h2 {
 .input-group {
     display: flex;
     align-items: center;
+    justify-content: center;
     margin-bottom: 20px;
 }
 
@@ -465,7 +493,19 @@ h2 {
 }
 
 .table-container {
+    display: flex;
+    justify-content: center;
     margin-bottom: 40px;
+}
+.chart1-container{
+    display: flex;
+    justify-content: center;
+}
+
+.chart2-container
+{
+    display: flex;
+    justify-content: center;
 }
 
 .result-section {
