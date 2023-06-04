@@ -13,11 +13,11 @@
     <h3>二.实验原理</h3>
     <p>1. 净现值（Net Present Value, NPV）是一种投资决策工具，它的主要作用是评估和比较投资项目的经济效益。它是通过将预期的现金流按照某个折现率折现到现在，然后减去初始投资来计算的。NPV是一个十分重要的指标，它能够量化未来收益的当前价值，帮助我们更好地评估和选择投资项目。</p>
 
-    <p>公式表示为：<strong>NPV = ∑ Ct / (1+r)^t - C0</strong>，其中 Ct 代表第 t 期的现金流，r 是折现率，C0 是初始投资。</p>
+    <p>公式表示为：<vue-latex expression="NPV=\sum_{t=1}^{n}{\frac{C_t}{(1+r)^t}-C_0}"></vue-latex>，其中<vue-latex expression="C_t"/>代表第 <vue-latex expression="t"/> 期的现金流，<vue-latex expression="r"/> 是折现率，<vue-latex expression="C_0"/> 是初始投资。</p>
 
     <p>2. 内部回报率（Internal Rate of Return, IRR）也是一种重要的投资决策工具，它是使投资项目的NPV为零的折现率。换句话说，IRR 是投资者实际得到的年回报率，如果一个项目的 IRR 高于投资者的期望回报率，那么投资者通常会选择投资，反之则会放弃。</p>
 
-    <p>IRR的计算公式是：<strong>IRR = r such that NPV = ∑ Ct / (1+r)^t - C0 = 0</strong></p>
+    <p>IRR的计算公式是：<vue-latex expression="IRR=\arg_{r}{\sum_{t=1}^{n}{\frac{C_t}{(1+r)^t}-C_0}=0}"/></p>
 
    
 </div>
@@ -37,7 +37,7 @@
                 <p>在查看了计算结果和图表之后，您需要对这些结果进行分析。内部收益率和净现值是投资决策的重要依据，它们反映了投资的盈利能力和价值。您需要根据这些结果，分析投资的盈利情况，预估未来的现金流，并据此调整您的投资策略。</p>
             </div>
         </div>
-        <div class="input-section">
+        <div class="input-section" >
             <div class="input-group">
                 <label for="inputNumber">请输入计算期数：</label>
                 <a-input-number id="inputNumber" v-model:value="periodvalue" :min="1" :max="50" />
@@ -46,7 +46,7 @@
         </div>
     </div>
     <div class="table-container">
-        <div style="font-weight: bold; font-size: 16px;">请输入计算现金流：</div>
+        <div style="font-weight: bold; font-size: 16px; display: block;">请输入计算现金流：</div>
         <a-table :columns="columns" :data-source="dataSource" bordered>
             <template #bodyCell="{ column, text, record }">
                 <template v-if="['cashflow'].includes(column.dataIndex)">
@@ -86,17 +86,24 @@
             </div>
         </div>
     </div>
-    <div class="chart1-container">
+
+
+    <div v-show="ifshow_npv">
+        <div class="chart1-container">
         <div  id="chart1" style="width: 600px;height:400px;"></div>
     </div>
-
     <div class="container">
             <div class="input-group">
                 <a-button type="primary" @click="calculateNPV();draw2()"  class="calculate-result"
                 style="margin-left: 10px;">计算NPV和IRR 并画出 NPV-折现率 图</a-button>
             </div>
     </div>
-    
+    </div>
+
+
+
+    <div v-show="ifshow_irr">
+
     <div class="result-section">
         <div class="result-item">
             <span class="result-label">净现值（NPV）：</span>
@@ -113,6 +120,7 @@
     <div class="chart2-container">
         <div id="chart2" style="width: 600px;height:400px;"></div>
     </div>
+</div>
     <!-- <div ref="chart" style="width: 100%; height: 400px;"></div> -->
 </template>
 
@@ -127,6 +135,7 @@ import { Document } from '@element-plus/icons-vue';
 import { onMounted } from 'vue';
 import { TableColumn } from 'element-ui/types/table-column';
 import type { TableColumnType } from 'ant-design-vue';
+import {VueLatex} from 'vatex';
 
 interface DataItem {
     key: string;
@@ -138,6 +147,9 @@ interface DataItem {
 
 export default {
     name: 'JINXIANZHI',
+    components: {
+        VueLatex
+    },
     setup() {
         //期数  
         const periodvalue = ref<number>(5);
@@ -148,6 +160,8 @@ export default {
         let npv_init=0;
         var npv_show: number[] = [0, 0];
         const irr = ref<number>(0);
+        const ifshow_npv=ref<boolean>(false);
+        const ifshow_irr=ref<boolean>(false);
 
         const columns: TableColumnType[] = [
             {
@@ -277,6 +291,7 @@ export default {
 
         const calanddraw1 = () => {
             // Calculate NPV
+            ifshow_npv.value=true;
             let npvSum = 0;
             let discount_rate = discount_rate1.value;
             let graph1data = [];
@@ -325,6 +340,7 @@ export default {
         }
 
         const calculateNPV = () =>{
+            ifshow_irr.value=true;
             npv.value=tmpnpv;
             // Calculate IRR using bisection method
             const cashflows = dataSource.value.map(item => item.cashflow);
@@ -429,6 +445,8 @@ export default {
             npv,
             irr,
             npv_show,
+            ifshow_irr,
+            ifshow_npv,
         };
     },
 }
@@ -494,9 +512,9 @@ h2 {
     margin-left: 20px;
 }
 
-.calculate-button {
+.calculate-result {
     text-align: center;
-    margin-bottom: 20px;
+    margin: 20px;
 }
 
 .table-container {
