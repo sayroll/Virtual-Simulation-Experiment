@@ -3,7 +3,7 @@
 <template>
     <div class="container">
         <h2>实验报告</h2>
-        <div class="report-section">
+        
             <div class="report-item">
                 <h3>一.实验目的</h3>
                 <p>这个实验的目的是通过实践理解和应用两种重要的金融分析工具 - 净现值（NPV）和内部回报率（IRR）。这两种工具被广泛应用于金融领域，是对投资项目进行评估的关键指标。通过深入学习并实践这两种工具的使用，学习者将能够掌握评估投资项目的基本技能，学会如何从数据的角度来理解和判断一个投资项目的价值。</p>
@@ -36,91 +36,116 @@
                 <p><strong>六：理解并分析实验结果</strong></p>
                 <p>在查看了计算结果和图表之后，您需要对这些结果进行分析。内部收益率和净现值是投资决策的重要依据，它们反映了投资的盈利能力和价值。您需要根据这些结果，分析投资的盈利情况，预估未来的现金流，并据此调整您的投资策略。</p>
             </div>
-        </div>
-        <div class="input-section" >
-            <div class="input-group">
-                <label for="inputNumber">输入计算期数：</label>
-                <a-input-number id="inputNumber" v-model:value="periodvalue" :min="1" :max="50" />
-                <a-button type="primary" @click="refreshcomp()" style="margin-left: 10px;">确认</a-button>
-            </div>
-        </div>
-    </div>
-    <div class="table-container">
-        <div style="font-weight: bold; font-size: 16px; display: block;">请输入计算现金流：</div>
-        <a-table :columns="columns" :data-source="dataSource" bordered>
-            <template #bodyCell="{ column, text, record }">
-                <template v-if="['cashflow'].includes(column.dataIndex)">
-                    <div>
-                        <a-input v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]"
-                            style="margin: -5px 0" />
-                        <template v-else>
-                            {{ text }}
-                        </template>
-                    </div>
-                </template>
-                <template v-else-if="column.dataIndex === 'operation'">
-                    <div class="editable-row-operations">
-                        <span v-if="editableData[record.key]">
-                            <a-button type="primary" size="small" @click="save(record.key)"
-                                class="operation-btn">保存</a-button>
-                            <a-popconfirm title="Sure to cancel?" @confirm="cancel(record.key)">
-                                <a-button type="default" size="small" class="operation-btn">取消</a-button>
-                            </a-popconfirm>
-                        </span>
-                        <span v-else>
-                            <a-button type="primary" size="small" @click="edit(record.key)"
-                                class="operation-btn">净现金流数据输入</a-button>
-                        </span>
-                    </div>
-                </template>
-            </template>
-        </a-table>
     </div>
     <div class="container">
-        <div class="input-section">
-            <div class="input-group">
-            <label for="discountRate">请设定折现率：</label>
-            <a-input-number id="discountRate" v-model:value="discount_rate1" :min="0" :max="100"
-            :formatter="value => `${value}%`" :parser="value => value.replace('%', '')" />
-            <a-button type="primary" @click="calanddraw1();" class="calculate-result">计算折现后每年现金流量并绘制相应图表</a-button>
+        <div class="report-item">
+            <h3>四.实验步骤</h3>
+            <p><strong>步骤一：输入计算期数</strong></p>
+            <div class="input-section" >
+                <div class="input-group">
+                    <label for="inputNumber">当前计算期数为：</label>
+                    <a-input-number id="inputNumber" v-model:value="periodvalue" :min="1" :max="50" />
+                    <a-button type="primary" @click="refreshcomp()" style="margin-left: 10px;">确认</a-button>
+                </div>
             </div>
+        </div> 
+    </div>
+    <div class="container">
+        <div class="report-item">
+            <p><strong>步骤二：输入计算现金流</strong></p>
+            <div class="table-container">
+                <a-table :columns="columns" :data-source="dataSource" bordered>
+                    <template #bodyCell="{ column, text, record }">
+                        <template v-if="['cashflow'].includes(column.dataIndex)">
+                            <div>
+                                <a-input v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]"
+                                style="margin: -5px 0" />
+                                <template v-else>
+                                    {{ text }}
+                                </template>
+                            </div>
+                        </template>
+                        <template v-else-if="column.dataIndex === 'operation'">
+                            <div class="editable-row-operations">
+                                <span v-if="editableData[record.key]">
+                                    <a-button type="primary" size="small" @click="save(record.key)"
+                                    class="operation-btn">保存</a-button>
+                                    <a-popconfirm title="Sure to cancel?" @confirm="cancel(record.key)">
+                                        <a-button type="default" size="small" class="operation-btn">取消</a-button>
+                                    </a-popconfirm>
+                                </span>
+                                <span v-else>
+                                    <a-button type="primary" size="small" @click="edit(record.key)"
+                                    class="operation-btn">净现金流数据输入</a-button>
+                                </span>
+                            </div>
+                        </template>
+                    </template>
+                </a-table>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="report-item">
+            <p><strong>步骤三：设定折现率</strong></p>
+            <div class="input-section">
+                <div class="input-group">
+                <label for="discountRate">设定折现率为：</label>
+                <a-input-number id="discountRate" v-model:value="discount_rate1" :min="0" :max="100"
+                :formatter="value => `${value}%`" :parser="value => value.replace('%', '')" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="report-item">
+            <p><strong>步骤四：根据输入的实验数据计算年现金流量</strong></p>
+            <a-button type="primary" @click="calanddraw1();" class="calculate-result">计算折现后每年现金流量并绘制相应图表</a-button>
         </div>
     </div>
 
 
     <div v-show="ifshow_npv">
         <div class="chart1-container">
-        <div  id="chart1" style="width: 600px;height:400px;"></div>
-    </div>
-    <div class="container">
-            <div class="input-group">
-                <a-button type="primary" @click="calculateNPV();draw2()"  class="calculate-result"
-                style="margin-left: 10px;">计算NPV和IRR 并画出 NPV-折现率 图</a-button>
-            </div>
-    </div>
+            <div  id="chart1" style="width: 600px;height:400px;"></div>
+        </div>
     </div>
 
+    <div class="container">
+        <div class="report-item">
+            <p><strong>步骤五：计算NPV和IRR指标</strong></p>
+            <a-button type="primary" @click="calculateNPV()"  class="calculate-result"
+            style="margin-left: 10px;">计算NPV和IRR</a-button>
+            <div class="result-section">
+                <div class="result-item">
+                    <span class="result-label">净现值（NPV）：</span>
+                    <span class="result-value"> {{ npv.toFixed(2) }} </span>
+                    <span class="result-label"> &nbsp万元</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">内部收益率（IRR）：</span>
+                    <span class="result-value">{{ irr.toFixed(2) }}%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="report-item">
+            <p><strong>步骤六：画出 NPV-折现率 图</strong></p>
+            <a-button type="primary" @click="draw2()"  class="calculate-result"
+                style="margin-left: 10px;">画出 NPV-折现率 图</a-button>
+        </div>
+    </div>
 
 
     <div v-show="ifshow_irr">
 
-    <div class="result-section">
-        <div class="result-item">
-            <span class="result-label">净现值（NPV）：</span>
-            <span class="result-value"> {{ npv.toFixed(2) }} </span>
-            <span class="result-label"> &nbsp万元</span>
-        </div>
-        <div class="result-item">
-            <span class="result-label">内部收益率（IRR）：</span>
-            <span class="result-value">{{ irr.toFixed(2) }}%</span>
+        <div class="chart2-container">
+            <div id="chart2" style="width: 600px;height:400px;"></div>
         </div>
     </div>
-
-
-    <div class="chart2-container">
-        <div id="chart2" style="width: 600px;height:400px;"></div>
-    </div>
-</div>
     <!-- <div ref="chart" style="width: 100%; height: 400px;"></div> -->
 </template>
 
@@ -273,7 +298,7 @@ export default {
             // 模拟数据
             var options = {
                 title: {
-                    text: '折现后年现金流量 图'
+                    text: '折现后年现金流量'
                 },
             };
             mychart.setOption(options);
@@ -283,7 +308,7 @@ export default {
             // 模拟数据
             var options2 = {
                 title: {
-                    text: 'NPV-折现率 图'
+                    text: 'NPV-折现率'
                 },
             };
             mychart2.setOption(options2);
@@ -311,7 +336,7 @@ export default {
             var mychart = echarts.getInstanceByDom(document.getElementById('chart1'));
             var options = {
                 title: {
-                    text: '折现后年现金流量 图',
+                    text: '折现后年现金流量',
                 },
                 tooltip: {
                     trigger: 'axis',
@@ -326,7 +351,7 @@ export default {
                 },
                 yAxis: {
                     type: 'value',
-                    name: '折现后当年现金流量/万元',
+                    name: '折现后年现金流量/万元',
                 },
                 series: [
                     {
@@ -399,7 +424,7 @@ export default {
 
             var options2 = {
                 title: {
-                    text: 'NPV-折现率 图',
+                    text: 'NPV-折现率',
                 },
                 tooltip: {
                     trigger: 'axis',
