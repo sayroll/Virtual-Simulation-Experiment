@@ -10,36 +10,36 @@
             <p>在这个实验中，我们不仅希望学习者能理解和应用NPV和IRR这两种工具，更希望他们能够学会如何将理论知识应用到实际的金融分析中。这对于学习者来说，不仅能够提升他们的金融分析能力，同时也能提高他们的问题解决能力和决策能力。</p>
             </div>
             <div class="report-item">
-    <h3>二.实验原理</h3>
-    <p>1. 净现值（Net Present Value, NPV）是一种投资决策工具，它的主要作用是评估和比较投资项目的经济效益。它是通过将预期的现金流按照某个折现率折现到现在，然后减去初始投资来计算的。NPV是一个十分重要的指标，它能够量化未来收益的当前价值，帮助我们更好地评估和选择投资项目。</p>
+                <h3>二.实验原理</h3>
+                <p>1. 净现值（Net Present Value, NPV）是一种投资决策工具，它的主要作用是评估和比较投资项目的经济效益。它是通过将预期的现金流按照某个折现率折现到现在，然后减去初始投资来计算的。NPV是一个十分重要的指标，它能够量化未来收益的当前价值，帮助我们更好地评估和选择投资项目。</p>
 
-    <p>公式表示为：<vue-latex expression="NPV=\sum_{t=1}^{n}{\frac{C_t}{(1+r)^t}-C_0}"></vue-latex>，其中<vue-latex expression="C_t"/>代表第 <vue-latex expression="t"/> 期的现金流，<vue-latex expression="r"/> 是折现率，<vue-latex expression="C_0"/> 是初始投资。</p>
+                <p>公式表示为：<vue-latex expression="NPV=\sum_{t=1}^{n}{\frac{C_t}{(1+r)^t}-C_0}"></vue-latex>，其中<vue-latex expression="C_t"/>代表第 <vue-latex expression="t"/> 期的现金流，<vue-latex expression="r"/> 是折现率，<vue-latex expression="C_0"/> 是初始投资。</p>
 
-    <p>2. 内部回报率（Internal Rate of Return, IRR）也是一种重要的投资决策工具，它是使投资项目的NPV为零的折现率。换句话说，IRR 是投资者实际得到的年回报率，如果一个项目的 IRR 高于投资者的期望回报率，那么投资者通常会选择投资，反之则会放弃。</p>
+                <p>2. 内部回报率（Internal Rate of Return, IRR）也是一种重要的投资决策工具，它是使投资项目的NPV为零的折现率。换句话说，IRR 是投资者实际得到的年回报率，如果一个项目的 IRR 高于投资者的期望回报率，那么投资者通常会选择投资，反之则会放弃。</p>
 
-    <p>IRR的计算公式是：<vue-latex expression="IRR=\arg_{r}{\sum_{t=1}^{n}{\frac{C_t}{(1+r)^t}-C_0}=0}"/></p>
+                <p>IRR的计算公式是：<vue-latex expression="IRR=\arg_{r}{\sum_{t=1}^{n}{\frac{C_t}{(1+r)^t}-C_0}=0}"/></p>
 
    
-</div>
+            </div>
             <div class="report-item">
-                <h3>三.实验步骤</h3>
-                <p><strong>步骤一：输入实验参数</strong></p>
+                <h3>三.实验内容</h3>
+                <p><strong>一：输入实验参数</strong></p>
                 <p>首先，您需要在“投资期间”、“折现率”和“现金流”输入框中分别输入投资的持续期间、您对未来现金流的预估折现率以及每个期间的现金流。请您按照从早期到晚期的顺序输入现金流，以确保数据的正确性。</p>
-                <p><strong>步骤二：核实输入参数的准确性</strong></p>
+                <p><strong>二：核实输入参数的准确性</strong></p>
                 <p>在完成所有必要的输入后，我们的系统将自动对输入的数据进行核实。如果您输入的数据无法被我们的系统识别，或者有某个输入框留空，系统将提醒您修改相关数据。请您仔细检查这些提示，并根据系统的反馈对输入数据进行相应的调整。</p>
-                <p><strong>步骤三：计算投资的内部收益率和净现值</strong></p>
+                <p><strong>三：计算投资的内部收益率和净现值</strong></p>
                 <p>现在，您可以点击“计算”按钮，我们的系统将基于您的输入计算投资的内部收益率和净现值。在这个过程中，我们使用了科学的计算方法，保证了结果的准确性和公正性。</p>
-                <p><strong>步骤四：检查计算结果</strong></p>
+                <p><strong>四：检查计算结果</strong></p>
                 <p>计算完成后，我们的系统将对结果进行检查。如果计算过程中出现了错误，例如内部收益率的计算无法收敛，系统将提醒您并建议您使用其他投资评估方法，例如修正内部收益率（MIRR）或净现值（NPV）。</p>
-                <p><strong>步骤五：创建并查看结果图表</strong></p>
+                <p><strong>五：创建并查看结果图表</strong></p>
                 <p>您可以点击“创建图表”按钮，我们的系统将为您创建一个图表，直观地展示出投资的内部收益率和净现值随折现率变化的趋势。这可以帮助您更直观地理解投资的收益情况，从而做出更明智的投资决策。</p>
-                <p><strong>步骤六：理解并分析实验结果</strong></p>
+                <p><strong>六：理解并分析实验结果</strong></p>
                 <p>在查看了计算结果和图表之后，您需要对这些结果进行分析。内部收益率和净现值是投资决策的重要依据，它们反映了投资的盈利能力和价值。您需要根据这些结果，分析投资的盈利情况，预估未来的现金流，并据此调整您的投资策略。</p>
             </div>
         </div>
         <div class="input-section" >
             <div class="input-group">
-                <label for="inputNumber">请输入计算期数：</label>
+                <label for="inputNumber">输入计算期数：</label>
                 <a-input-number id="inputNumber" v-model:value="periodvalue" :min="1" :max="50" />
                 <a-button type="primary" @click="refreshcomp()" style="margin-left: 10px;">确认</a-button>
             </div>
@@ -69,7 +69,7 @@
                         </span>
                         <span v-else>
                             <a-button type="primary" size="small" @click="edit(record.key)"
-                                class="operation-btn">现金流数据输入</a-button>
+                                class="operation-btn">净现金流数据输入</a-button>
                         </span>
                     </div>
                 </template>
@@ -170,7 +170,7 @@ export default {
                 width: '15%',
             },
             {
-                title: 'Cashflow 现金流/万元',
+                title: 'Net Cashflow 净现金流/万元',
                 dataIndex: 'cashflow',
                 width: '15%',
             },
@@ -205,7 +205,7 @@ export default {
                 period: `${i}`,
                 cashflow: 0,
                 cashflow_discounted: 0,
-                attentioninfo: '为符合标准现金流要求，请注意时间点0时的现金流输入需要为负，其余时间点现金流输入需要为非负数',
+                attentioninfo: '为符合标准现金流要求，请注意时间点0时的净现金流输入需要为负，其余时间点净现金流输入需要为非负数',
             });
         }
 
@@ -273,7 +273,7 @@ export default {
             // 模拟数据
             var options = {
                 title: {
-                    text: '折现后当年现金流量 图'
+                    text: '折现后年现金流量 图'
                 },
             };
             mychart.setOption(options);
@@ -311,7 +311,7 @@ export default {
             var mychart = echarts.getInstanceByDom(document.getElementById('chart1'));
             var options = {
                 title: {
-                    text: '折现后当年现金流量 图',
+                    text: '折现后年现金流量 图',
                 },
                 tooltip: {
                     trigger: 'axis',
