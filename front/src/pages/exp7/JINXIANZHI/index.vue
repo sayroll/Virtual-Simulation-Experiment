@@ -366,7 +366,6 @@ export default {
         }
 
         const calculateNPV = () =>{
-            ifshow_irr.value=true;
             npv.value=tmpnpv;
             // Calculate IRR using bisection method
             const cashflows = dataSource.value.map(item => item.cashflow);
@@ -401,7 +400,7 @@ export default {
         }
 
         const draw2 = () => {
-
+            ifshow_irr.value=true;
             let npvSum = 0;
             let discount_rate = final_rate.value;
             dataSource.value.forEach((item, index) => {
