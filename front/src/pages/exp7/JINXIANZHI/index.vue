@@ -100,7 +100,7 @@
 
     <div class="container">
         <div class="report-item">
-            <p><strong>步骤四：根据输入的实验数据计算年现金流量</strong></p>
+            <p><strong>步骤四：根据步骤二输入的实验数据计算年现金流量</strong></p>
             <a-button type="primary" @click="calanddraw1();" class="calculate-result">计算折现后每年现金流量并绘制相应图表</a-button>
         </div>
     </div>
@@ -116,17 +116,17 @@
         <div class="report-item">
             <p><strong>步骤五：计算NPV和IRR指标</strong></p>
             <a-button type="primary" @click="calculateNPV()"  class="calculate-result"
-            style="margin-left: 10px;">计算NPV和IRR</a-button>
-            <div class="result-section">
-                <div class="result-item">
-                    <span class="result-label">净现值（NPV）：</span>
-                    <span class="result-value"> {{ npv.toFixed(2) }} </span>
-                    <span class="result-label"> &nbsp万元</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">内部收益率（IRR）：</span>
-                    <span class="result-value">{{ irr.toFixed(2) }}%</span>
-                </div>
+            >计算NPV和IRR</a-button>
+            <div class="result-item">
+                <span class="result-label">当折现率为</span>
+                <label>{{discount_rate1}}</label>
+                <span class="result-label" >%时的净现值（NPV）:</span>
+                <span class="result-value"> {{ npv.toFixed(2) }} </span>
+                <span class="result-label"> &nbsp万元</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">内部收益率（IRR）：</span>
+                <span class="result-value">{{ irr.toFixed(2) }}%</span>
             </div>
         </div>
     </div>
@@ -134,8 +134,9 @@
     <div class="container">
         <div class="report-item">
             <p><strong>步骤六：画出 NPV-折现率 图</strong></p>
-            <a-button type="primary" @click="draw2()"  class="calculate-result"
-                style="margin-left: 10px;">画出 NPV-折现率 图</a-button>
+            <a-button type="primary" @click="draw2()"  class="calculate-result">
+                画出 NPV-折现率 图
+            </a-button>
         </div>
     </div>
 
@@ -512,6 +513,16 @@ h2 {
     margin-bottom: 20px;
 }
 
+.report-item span
+{
+    font-size: 20px;
+}
+
+.report-item label
+{
+    font-size: 20px;
+}
+
 .input-section {
     display: flex;
     flex-wrap: wrap;
@@ -539,7 +550,7 @@ h2 {
 
 .calculate-result {
     text-align: center;
-    margin: 20px;
+    margin: 20px 25px;
 }
 
 .table-container {
