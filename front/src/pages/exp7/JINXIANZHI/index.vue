@@ -7,7 +7,7 @@
             <a-row justify="center">
                 <a-col span="6">课程名称：软件工程经济学</a-col>
                 <a-col span="6">课号：420279</a-col>
-                <a-col span="6">实验项目名称：软件测试成本度量实验</a-col>
+                <a-col span="6">实验项目名称：净现值和内部收益率计算实验</a-col>
             </a-row>
             <a-row justify="center">
                 <a-col span="6">实验时间：<span style="border-bottom: 1px solid grey;border-radius: none;"><a-date-picker
